@@ -1,0 +1,6 @@
+{
+    "environmentName": "minecraft-bedrock",
+    "environmentLocation": "westus2",
+    "vmSize": "Standard_A2_v2",
+    "maxNodeCount": 3
+}

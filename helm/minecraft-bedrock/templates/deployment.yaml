@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "minecraft-bedrock.fullname" . }}
+  labels:
+    {{- include "minecraft-bedrock.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "minecraft-bedrock.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "minecraft-bedrock.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "minecraft-bedrock.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: minecraft-udp
+              containerPort: 19132
+              protocol: UDP
+          livenessProbe:
+            exec:
+              command:
+                - mc-monitor
+                - status-bedrock
+                - --host
+                - 127.0.0.1
+            initialDelaySeconds: 300
+            periodSeconds: 30
+            failureThreshold: 10
+            successThreshold: 1
+            timeoutSeconds: 1      
+          readinessProbe:
+            exec:
+              command:
+                - mc-monitor
+                - status-bedrock
+                - --host
+                - 127.0.0.1
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            failureThreshold: 10
+            successThreshold: 1
+            timeoutSeconds: 1      
+          env:
+            - name: EULA
+              value: "TRUE"
+            - name: VERSION
+              value: {{ .Values.minecraftServer.version | quote }}
+            - name: GAMEMODE
+              value: {{ .Values.minecraftServer.gameMode | quote }}
+            - name: DIFFICULTY
+              value: {{ .Values.minecraftServer.difficulty | quote }}
+            - name: WHITELIST
+              value: {{ default "" .Values.minecraftServer.whitelist | quote }}
+            - name: MAX_PLAYERS
+              value: {{ .Values.minecraftServer.maxPlayers | quote }}
+            - name: ONLINE_MODE
+              value: {{ .Values.minecraftServer.onlineMode | quote }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: datadir
+            mountPath: /data
+      volumes:
+      - name: datadir
+      {{- if .Values.persistence.dataDir.enabled }}
+        persistentVolumeClaim:
+          claimName: {{ template "minecraft-bedrock.fullname" . }}-datadir
+      {{- else }}
+        emptyDir: {}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

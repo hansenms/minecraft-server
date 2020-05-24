@@ -15,6 +15,7 @@ persistence:
   dataDir:
     enabled: true
     size: 50Gi
+  resourcePolicy: "keep"
 
 minecraftServer:
   name: "Kubernetes Minecraft (Bedrock)"

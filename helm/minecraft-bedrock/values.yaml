@@ -26,7 +26,7 @@ minecraftServer:
   # Game difficulty
   difficulty: normal
   # A comma-separated list of player names to whitelist.
-  whitelist:
+  whitelist: true
   # Max connected players.
   maxPlayers: 20
   onlineMode: true

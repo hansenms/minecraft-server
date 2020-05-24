@@ -68,8 +68,8 @@ spec:
               value: {{ .Values.minecraftServer.gameMode | quote }}
             - name: DIFFICULTY
               value: {{ .Values.minecraftServer.difficulty | quote }}
-            - name: WHITELIST
-              value: {{ default "" .Values.minecraftServer.whitelist | quote }}
+            - name: WHITE_LIST
+              value: {{ default "true" .Values.minecraftServer.whitelist | quote }}
             - name: MAX_PLAYERS
               value: {{ .Values.minecraftServer.maxPlayers | quote }}
             - name: ONLINE_MODE

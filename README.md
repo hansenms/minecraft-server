@@ -98,9 +98,9 @@ The Bedrock helm chart also adds a `"helm.sh/resource-policy": keep` annotation 
 helm install bedrock-server helm/minecraft-bedrock/ --set persistence.resourcePolicy="delete"
 ```
 
-## Connecting to Bedrock servers from consoles
+## Connecting to Bedrock servers from consoles (Xbox One)
 
-If your players are using a Windows 10 client, they will be able to add the minecraft server by hitting "Add server" in the servers menu and then filling in the details"
+If your players are using a Windows 10 client, they will be able to add the minecraft server by hitting "Add server" in the servers menu and then filling in the details
 
 ![adding a new server](https://cloud.addictivetips.com/wp-content/uploads/2018/08/add-server-minecraft.jpg)
 
@@ -108,7 +108,7 @@ However, consoles don't have that option, so we need a workaround. There are a c
 
 ### LAN Proxy (phantom)
 
-There is a simple tool available on for setting up a local LAN proxy: [https://github.com/jhead/phantom]. It will make a remote server look like a LAN game and allow players to join from the friends menu. Run the tool with something like:
+There is a simple tool available on for setting up a local LAN proxy: [https://github.com/jhead/phantom](). It will make a remote server look like a LAN game and allow players to join from the friends menu. Run the tool with something like:
 
 ```shell
  ./phantom-<os> -server lax.mcbr.cubed.host:19132
@@ -118,12 +118,12 @@ And then find the game from the friends menu.
 
 ### Bedrock Connect DNS
 
-There is a pretty neat DNS trick that can be used as described here: https://github.com/Pugmatt/BedrockConnect.
+There is a pretty neat DNS trick that can be used as described here: [https://github.com/Pugmatt/BedrockConnect]().
 
 Set your DNS servers to manual on the XBox with:
 
 1. Primary DNS: 104.238.130.180 
 1. Secondary DNS: 8.8.8.8 (or similar)
 
-Then connect to one of the featured servers and you will be "relayed" to another server that will allow you to enter the remote bedrock server you would like to connect to. Watch [this video](https://www.youtube.com/watch?v=Uz-XYXAxd8Q) for details.
+Then connect to one of the "featured servers" and you will be "relayed" to another server that will allow you to enter the remote bedrock server you would like to connect to. Watch [this video](https://www.youtube.com/watch?v=Uz-XYXAxd8Q) for details.
 

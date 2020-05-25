@@ -66,7 +66,7 @@ to detach, use `ctrl+p` and then `ctrl+q`. Do **not** do `ctrl+c`, which will en
 The Java Edition of the Minecraft server can be deployed with the helm chart in the standard helm repository:
 
 ```bash
-helm upgrade --install minecraft-server \
+helm install minecraft-server \
     --set minecraftServer.version="1.15.2" \
     --set livenessProbe.initialDelaySeconds=150 \
     --set persistence.storageClass=azurefile \

@@ -46,6 +46,21 @@ helm install bedrock-server helm/minecraft-bedrock/ \
 
 here we have explicitly spelled out some default settings. See [values.yaml](helm/minecraft-bedrock/values.yaml) for details on values that can be set.
 
+After launching the bedrock server, you can attach to the running process to issue commands (e.g. whitelist):
+
+```bash
+kubectl attach <pod name> -ti
+```
+
+then
+
+```bash
+whitelist add <player name>
+whitelist reload
+```
+
+to detach, use `ctrl+p` and then `ctrl+q`. Do **not** do `ctrl+c`, which will end the running process.
+
 ## Deploy Java Minecraft Server
 
 The Java Edition of the Minecraft server can be deployed with the helm chart in the standard helm repository:
@@ -111,3 +126,4 @@ Set your DNS servers to manual on the XBox with:
 1. Secondary DNS: 8.8.8.8 (or similar)
 
 Then connect to one of the featured servers and you will be "relayed" to another server that will allow you to enter the remote bedrock server you would like to connect to. Watch [this video](https://www.youtube.com/watch?v=Uz-XYXAxd8Q) for details.
+

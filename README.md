@@ -1,20 +1,24 @@
 # Minecraft Server on Kubernetes
 
-This repo demonstrates how to run a Minecraft server in Kubernetes.
+Minecraft is a great game for kids (of all ages) to learn, explore, and be creative. At some point, it may be interesting to play with others online and you may want to do that in a controlled environment. So you are thinking, you need a private server.
+
+However, before you go down the rabbit hole (the instructions here), if you just want the easiest way to get a private server experience with Minecraft, check out the [Minecraft Realms](https://www.minecraft.net/realms) where you can get a private server for a few friends for about $8/month. If you are less technically inclined and don't care about how all of this works, then that is what you are looking for.
+
+If, on the other hand, you wonder how Minecraft servers actually work and you want to **run a Minecraft server like a boss**, read on. This repo demonstrates how to run a Minecraft server in Kubernetes. There are also some details on how to connect consoles (e.g. Xbox One) to your private server. 
 
 ## Bedrock vs Java Edition
 
-There are really two main flavors or editions of Minecraft. The original [Java Edition](https://minecraft.gamepedia.com/Java_Edition) and the [Bedrock Edition](https://minecraft.gamepedia.com/Bedrock_Edition). Please consult the [Minecraft Wiki](https://minecraft.gamepedia.com/Minecraft_Wiki) for more information on the editions and versions of Minecraft. The Java and Bedrock editions are **not** interoperable. Specifically, a player running the Java version cannot connect to a Bedrock server and vice versa.
+There are really two main flavors or editions of Minecraft. The original [Java Edition](https://minecraft.gamepedia.com/Java_Edition) and the [Bedrock Edition](https://minecraft.gamepedia.com/Bedrock_Edition). Both are alive and well and being used and developed. Please consult the [Minecraft Wiki](https://minecraft.gamepedia.com/Minecraft_Wiki) for more information on the editions and versions of Minecraft. The Java and Bedrock editions are **not** compatible or interoperable. Specifically, a player running the Java version cannot connect to a Bedrock server and vice versa.
 
-If your players are connecting from consoles (more details on that later), windows 10, etc., they are likely using Bedrock edition and you should deploy the Bedrock server. If they are using the Minecraft launcher on Windows, Linux, or Mac, they are likely using the Java Edition.
+If your players are connecting from consoles (more details on that later), Windows 10, etc., they are likely using Bedrock edition and you should deploy the Bedrock server. If they are using the Minecraft launcher on Windows, Linux, or Mac, they are likely using the Java Edition. The instructions here are mostly focused on the Bedrock server, but there is some help on the Java Edition as well.
 
-There is an existing [helm chart for Minecraft Java Edition](https://github.com/helm/charts/tree/master/stable/minecraft) in the standard helm chart repository. And this repo contains a [helm chart for Minecraft Bedrock Edition](helm/minecraft-bedrock)
+There is an existing [helm chart for Minecraft Java Edition](https://github.com/helm/charts/tree/master/stable/minecraft) in the standard helm chart repository. And this repo contains a [helm chart for Minecraft Bedrock Edition](helm/minecraft-bedrock). We use these helm charts to provision and manage the Minecraft server.
 
 ## Deploying a Kubernetes cluster
 
-There are many ways to deploy a Kubernetes cluster. This repo uses [Azure AKS](https://azure.microsoft.com/en-us/services/kubernetes-service/) as an example. This repo contains a convenience script that will create a service principal, make sure SSH keys are available, store the details in a keyvault, and provision the cluster. It should be idempotent-ish allowing you to update the cluster with changes to your environment.
+There are many ways to deploy a Kubernetes cluster. This repo demonstrates [Azure AKS](https://azure.microsoft.com/en-us/services/kubernetes-service/) as an example. The install steps are captured in a a [convenience script](deploy-cluster.sh) that will create a service principal, make sure SSH keys are available, store the details in a keyvault, and provision the cluster. It should be idempotent-ish allowing you to update the cluster with changes to your environment.
 
-To deploy the cluster, log into your Azure account with the Azure CLI:
+You don't have to use the script. You may, in fact, want to walk through the steps slowly to decide which model settings are the right ones for you. But to deploy the cluster with the script, log into your Azure account with the Azure CLI:
 
 ```bash
 az login
@@ -40,11 +44,20 @@ To install the Bedrock minecraft server, use the helm chart in this repo:
 helm install bedrock-server helm/minecraft-bedrock/ \
     --set minecraftServer.gameMode="survival" \
     --set minecraftServer.difficulty="normal" \
-    --set minecraftServer.whitelist="Player1,Player2" \
-    --set persistence.storageClass="azurefile"
+    --set minecraftServer.whitelist=true \
+    --set persistence.storageClass="azurefile" \
+    --set service.dnsPrefix="my-minecraft-server"
 ```
 
 here we have explicitly spelled out some default settings. See [values.yaml](helm/minecraft-bedrock/values.yaml) for details on values that can be set.
+
+The `service.dnsPrefix` is only relevant if you deploy on Azure AKS. It will be used to set the DNS name for the public IP address. So if you cluster is deployed in say `westus2`, the DNS name of your minecraft server will be `my-minecraft-server.westus2.cloudapp.azure.com`. You can use that address to connect to your Minecraft server.
+
+Another way to get the connection details is with a command like:
+
+```
+kubectl get --namespace default svc <helm-release-name>-minecraft-bedrock
+```
 
 After launching the bedrock server, you can attach to the running process to issue commands (e.g. whitelist):
 
@@ -52,7 +65,7 @@ After launching the bedrock server, you can attach to the running process to iss
 kubectl attach <pod name> -ti
 ```
 
-then
+You can find the pod name for your Minecraft server wth `kubectl get pods`. Then to issue a command:
 
 ```bash
 whitelist add <player name>
@@ -63,7 +76,7 @@ to detach, use `ctrl+p` and then `ctrl+q`. Do **not** do `ctrl+c`, which will en
 
 ## Deploy Java Minecraft Server
 
-The Java Edition of the Minecraft server can be deployed with the helm chart in the standard helm repository:
+The Java Edition of the Minecraft server can be deployed with the helm chart in the [standard helm repository](https://github.com/helm/charts/):
 
 ```bash
 helm install minecraft-server \
@@ -125,5 +138,5 @@ Set your DNS servers to manual on the XBox with:
 1. Primary DNS: 104.238.130.180 
 1. Secondary DNS: 8.8.8.8 (or similar)
 
-Then connect to one of the "featured servers" and you will be "relayed" to another server that will allow you to enter the remote bedrock server you would like to connect to. Watch [this video](https://www.youtube.com/watch?v=Uz-XYXAxd8Q) for details.
+Then connect to one of the "featured servers" and you will be "relayed" to another server that will allow you to enter the remote bedrock server you would like to connect to. Watch [this video](https://www.youtube.com/watch?v=g8mHvasVHMs) for details.
 

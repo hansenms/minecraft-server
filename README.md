@@ -140,3 +140,22 @@ Set your DNS servers to manual on the XBox with:
 
 Then connect to one of the "featured servers" and you will be "relayed" to another server that will allow you to enter the remote bedrock server you would like to connect to. Watch [this video](https://www.youtube.com/watch?v=g8mHvasVHMs) for details.
 
+## To Do
+
+There is still some work to do. If you want to pitch in here are some things to start with:
+
+1. Pass on relevant values from helm chart to Bedrock server.
+1. Helm chart to deploying Bedrock Connect server.
+1. Helm chart for DNS proxy (for BedrockConnect).
+
+Also check out the [issues](https://github.com/hansenms/minecraft-server/issues) for this repo.
+
+## Acknowledgements
+
+Most of the information in this repo was compiled from other sources. In no particular order:
+
+1. [Geoff Bourne aka itzg](https://github.com/itzg/) for making the Docker images for both the Java Edition and Bedrock Editions of the Minecraft server.
+1. [Justin Head aka jhead](https://github.com/jhead) for the phantom LAN proxy.
+1. [Pugmatt](https://github.com/Pugmatt) for the neat DNS trick to get consoles connected.
+1. [Kevint at theAutomators](https://theautomaters.com/) for a [blog on running Bedrock on Kubernetes](https://theautomaters.com/minecraft-on-kubernetes/).
+1. [The Java Edition Minecraft helm chart](https://github.com/helm/charts/tree/master/stable/minecraft) 

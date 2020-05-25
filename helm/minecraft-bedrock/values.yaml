@@ -60,6 +60,7 @@ securityContext: {}
 service:
   type: LoadBalancer
   port: 19132
+  # dnsPrefix: "mydnsprefix"
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

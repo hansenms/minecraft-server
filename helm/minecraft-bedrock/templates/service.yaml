@@ -4,6 +4,10 @@ metadata:
   name: {{ include "minecraft-bedrock.fullname" . }}
   labels:
     {{- include "minecraft-bedrock.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.service.dnsPrefix }}
+    "service.beta.kubernetes.io/azure-dns-label-name": {{ .Values.service.dnsPrefix | quote }}
+    {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:

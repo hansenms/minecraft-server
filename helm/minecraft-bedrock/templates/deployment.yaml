@@ -64,6 +64,8 @@ spec:
           env:
             - name: EULA
               value: "TRUE"
+            - name: SERVER_NAME
+              value: {{ .Values.minecraftServer.name | quote }}
             - name: VERSION
               value: {{ .Values.minecraftServer.version | quote }}
             - name: GAMEMODE

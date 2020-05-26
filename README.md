@@ -140,13 +140,30 @@ Set your DNS servers to manual on the XBox with:
 
 Then connect to one of the "featured servers" and you will be "relayed" to another server that will allow you to enter the remote bedrock server you would like to connect to. Watch [this video](https://www.youtube.com/watch?v=g8mHvasVHMs) for details.
 
+### Custom DNS masking
+
+This repo contains a helm chart that will deploy [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) in the Kubernetes cluster and mask all the "Featured Servers" in Minecraft. The dnsmasq application can be used to point to a BedrockConnect server or simply point directly to your private Minecraft server, in which case selecting any of the Featured Servers would take you straight to the private server.
+
+To deploy the DNS masking server:
+
+```bash
+helm install dnsmasq helm/dnsmasq/ --set bedrockConnect.ipAddress="XXX.XXX.XXX.XXX"
+```
+
+where `XXX.XXX.XXX.XXX` is either the IP address of a BedrockConnect server (it will default to `104.238.130.180`) or simply the address of your private Minecraft server. After deployment, find the public IP address of the dnsmasq service with:
+
+```bash
+kubectl get svc
+```
+
+and set that public IP address as the primary DNS server address for your Xbox One console.
+
 ## To Do
 
 There is still some work to do. If you want to pitch in here are some things to start with:
 
-1. Pass on relevant values from helm chart to Bedrock server.
+1. Pass on relevant all values from helm chart to Bedrock server. Only some settings are configurable at the moment.
 1. Helm chart to deploying Bedrock Connect server.
-1. Helm chart for DNS proxy (for BedrockConnect).
 
 Also check out the [issues](https://github.com/hansenms/minecraft-server/issues) for this repo.
 
@@ -159,3 +176,4 @@ Most of the information in this repo was compiled from other sources. In no part
 1. [Pugmatt](https://github.com/Pugmatt) for the neat DNS trick to get consoles connected.
 1. [Kevint at theAutomators](https://theautomaters.com/) for a [blog on running Bedrock on Kubernetes](https://theautomaters.com/minecraft-on-kubernetes/).
 1. [The Java Edition Minecraft helm chart](https://github.com/helm/charts/tree/master/stable/minecraft).
+1. [Jaime Pillora](https://github.com/jpillora) for the [Docker image for dnsmasq](https://github.com/jpillora/docker-dnsmasq).

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "dnsmasq.fullname" . }}
+  labels:
+    {{- include "dnsmasq.labels" . | nindent 4 }}
+data:
+  dnsmasq.conf: |
+    log-queries
+    no-resolv
+    server=1.0.0.1
+    server=1.1.1.1
+    strict-order
+    address=/geo.hivebedrock.network/{{ .Values.bedrockConnect.ipAddress }}
+    address=/hivebedrock.network/{{ .Values.bedrockConnect.ipAddress }}
+    address=/mco.mineplex.com/{{ .Values.bedrockConnect.ipAddress }}
+    address=/play.inpvp.net/{{ .Values.bedrockConnect.ipAddress }}
+    address=/mco.lbsg.net/{{ .Values.bedrockConnect.ipAddress }}
+    address=/mco.cubecraft.net/{{ .Values.bedrockConnect.ipAddress }}

@@ -1,0 +1,3 @@
+Get the service details (including IP address and port with):
+
+  kubectl get --namespace {{ .Release.Namespace }} svc {{ include "dnsmasq.fullname" . }}

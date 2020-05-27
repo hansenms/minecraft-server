@@ -140,17 +140,39 @@ Set your DNS servers to manual on the XBox with:
 
 Then connect to one of the "featured servers" and you will be "relayed" to another server that will allow you to enter the remote bedrock server you would like to connect to. Watch [this video](https://www.youtube.com/watch?v=g8mHvasVHMs) for details.
 
+This repo also contains a helm chart for running your own BedrockConnect service. Install itwith:
+
+```bash
+helm install brc helm/bedrock-connect/ --set service.ipAddress="XXX.XXX.XXX.XXX" --set service.ipAddressResourceGroup="my-ip-address-rg"
+```
+
+The specific IP address specification and resource group will work when running in AKS. The service principal should have contributor rights on thet resource group. If no IP address is specified it will get a dynamic IP address, which may be tricky to manage if it changes.
+
 ### Custom DNS masking
 
-This repo contains a helm chart that will deploy [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) in the Kubernetes cluster and mask all the "Featured Servers" in Minecraft. The dnsmasq application can be used to point to a BedrockConnect server or simply point directly to your private Minecraft server, in which case selecting any of the Featured Servers would take you straight to the private server.
+This repo also contains a helm chart that will deploy [dnsmasq](http://www.thekelleys.org.uk/dnsmasq/doc.html) in the Kubernetes cluster and mask any of "Featured Servers" in Minecraft (or really any server) The dnsmasq application can be used to point to a BedrockConnect server or simply point directly to your private Minecraft server, in which case selecting any of the Featured Servers would take you straight to the private server.
 
 To deploy the DNS masking server:
 
 ```bash
-helm install dnsmasq helm/dnsmasq/ --set bedrockConnect.ipAddress="XXX.XXX.XXX.XXX"
+helm install dnsmasq helm/dnsmasq/ --set dnsmasq.entry1.host='hivebedrock.network',dnsmasq.entry1.ip='XXX.XXX.XXX.XXX'
 ```
 
-where `XXX.XXX.XXX.XXX` is either the IP address of a BedrockConnect server (it will default to `104.238.130.180`) or simply the address of your private Minecraft server. After deployment, find the public IP address of the dnsmasq service with:
+where `XXX.XXX.XXX.XXX` is either the IP address of a BedrockConnect server or simply the address of your private Minecraft server. This will only overwrite the Hive server, but you can overwrite an arbitrary number of servers:
+
+```bash
+helm install dnsmasq helm/dnsmasq/ \
+    --set service.ipAddress="XXX.XXX.XXX.XXX" \
+    --set service.ipAddressResourceGroup="my-ip-address-rg" \
+    --set dnsmasq.entry1.host='geo.hivebedrock.network',dnsmasq.entry1.ip='YYY.YYY.YYY.YYY' \
+    --set dnsmasq.entry2.host='hivebedrock.network',dnsmasq.entry2.ip='YYY.YYY.YYY.YYY' \
+    --set dnsmasq.entry3.host='play.inpvp.net',dnsmasq.entry3.ip='YYY.YYY.YYY.YYY' \
+    --set dnsmasq.entry4.host='mco.mineplex.com',dnsmasq.entry4.ip='YYY.YYY.YYY.YYY' \
+    --set dnsmasq.entry5.host='mco.lbsg.net',dnsmasq.entry5.ip='YYY.YYY.YYY.YYY' \
+    --set dnsmasq.entry6.host='mco.cubecraft.net',dnsmasq.entry6.ip='YYY.YYY.YYY.YYY'
+```
+
+After deployment, find the public IP address of the dnsmasq service with:
 
 ```bash
 kubectl get svc

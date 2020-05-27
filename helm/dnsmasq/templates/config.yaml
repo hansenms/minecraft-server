@@ -11,9 +11,6 @@ data:
     server=1.0.0.1
     server=1.1.1.1
     strict-order
-    address=/geo.hivebedrock.network/{{ .Values.bedrockConnect.ipAddress }}
-    address=/hivebedrock.network/{{ .Values.bedrockConnect.ipAddress }}
-    address=/mco.mineplex.com/{{ .Values.bedrockConnect.ipAddress }}
-    address=/play.inpvp.net/{{ .Values.bedrockConnect.ipAddress }}
-    address=/mco.lbsg.net/{{ .Values.bedrockConnect.ipAddress }}
-    address=/mco.cubecraft.net/{{ .Values.bedrockConnect.ipAddress }}
+    {{- range $entry, $val := .Values.dnsmasq }}
+    address=/{{ $val.host }}/{{ $val.ip }}
+    {{- end }}

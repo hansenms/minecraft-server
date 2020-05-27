@@ -1,34 +1,18 @@
+# Default values for bedrock-connect.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
 image:
-  repository: jpillora/dnsmasq
+  repository: hansenms/bedrock-connect
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart version.
-  tag: "latest"
+  tag: latest
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
-dnsmasq: {}
-  # Specify which host names to mask.
-  # Note: Defined as a map instead of array to allow easy setting with --set
-  #entry1:
-  #  host: "mco.mineplex.com"
-  #  ip: "104.238.130.180"
-  #entry2:
-  #  host: "hivebedrock.network"
-  #  ip: "104.238.130.180"
-  #entry3:
-  #  host: "mco.mineplex.com"
-  #  ip: "104.238.130.180"
-  #entry4:
-  #  host: "play.inpvp.net"
-  #  ip: "104.238.130.180"
-  #entry5:
-  #  host: "mco.lbsg.net"
-  #  ip: "104.238.130.180"
-  #entry6:
-  #  host: "mco.cubecraft.net"
-  #  ip: "104.238.130.180"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -54,8 +38,7 @@ securityContext: {}
 
 service:
   type: LoadBalancer
-  port: 53
-  protocol: UDP
+  port: 19132
   # ipAddress
   # ipAddressResourceGroup
 

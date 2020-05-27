@@ -180,14 +180,6 @@ kubectl get svc
 
 and set that public IP address as the primary DNS server address for your Xbox One console.
 
-## To Do
-
-There is still some work to do. If you want to pitch in here are some things to start with:
-
-1. Pass on relevant all values from helm chart to Bedrock server. Only some settings are configurable at the moment.
-
-Also check out the [issues](https://github.com/hansenms/minecraft-server/issues) for this repo.
-
 ## Acknowledgements
 
 Most of the information in this repo was compiled from other sources. In no particular order:

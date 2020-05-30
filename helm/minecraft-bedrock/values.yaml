@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: itzg/minecraft-bedrock-server
+  repository: hansenms/minecraft-bedrock
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart version.
-  tag: latest
+  tag: 1.14.60.5
 
 persistence:
   storageClass: "azurefile"

@@ -19,8 +19,6 @@ persistence:
 
 minecraftServer:
   name: "Kubernetes Minecraft (Bedrock)"
-  # One of: LATEST, PREVIOUS, 1.11, 1.12, 1.13, 1.14.
-  version: "1.14"
   # Game mode
   gameMode: "survival"
   # Game difficulty

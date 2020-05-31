@@ -37,30 +37,6 @@ spec:
             - name: minecraft-udp
               containerPort: 19132
               protocol: UDP
-          livenessProbe:
-            exec:
-              command:
-                - mc-monitor
-                - status-bedrock
-                - --host
-                - 127.0.0.1
-            initialDelaySeconds: 300
-            periodSeconds: 30
-            failureThreshold: 10
-            successThreshold: 1
-            timeoutSeconds: 1      
-          readinessProbe:
-            exec:
-              command:
-                - mc-monitor
-                - status-bedrock
-                - --host
-                - 127.0.0.1
-            initialDelaySeconds: 30
-            periodSeconds: 5
-            failureThreshold: 10
-            successThreshold: 1
-            timeoutSeconds: 1      
           env:
             - name: GAMEMODE
               value: {{ .Values.minecraftServer.gameMode | quote }}

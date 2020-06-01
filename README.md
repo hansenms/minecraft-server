@@ -195,6 +195,14 @@ To assist with these tasks while the server is running in Kubernetes, there is a
 ./scripts/backup-bedrock.sh <helm release name>
 ```
 
+You can restore this to an Azure Files share with:
+
+```bash
+../scripts/restore-bedrock.sh <backup .tar.gz> <storage account name> <share name>
+```
+
+Make sure you don't have a running bedrock server on that share. You can create one, shut it down, restore, and then bring it back up.
+
 ## Acknowledgements
 
 Most of the information in this repo was compiled from other sources. In no particular order:

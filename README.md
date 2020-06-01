@@ -180,6 +180,21 @@ kubectl get svc
 
 and set that public IP address as the primary DNS server address for your Xbox One console.
 
+## Backing Bedrock Dedicated Server
+
+Backing up a bedrock server is a bit tricky. The sequence is:
+
+1. Send a `save hold` command to the server.
+1. Execute `save query` until server responds with a list of saved files.
+1. Backup files and truncate files accoring to lengts reported by server.
+1. Execure `save resume` to instruct server to release hold on files.
+
+To assist with these tasks while the server is running in Kubernetes, there is a backup script [`backup-bedrock.sh`](scripts/backup-bedrock.sh), which uses a combination of sending commands straight to the running bedrock server and monitoring the logs from the pod to make sure the files are saved correctly. It produces a `.tar.gz` file with the world and other files. Execute this script with:
+
+```bash
+./scripts/backup-bedrock.sh <helm release name>
+```
+
 ## Acknowledgements
 
 Most of the information in this repo was compiled from other sources. In no particular order:

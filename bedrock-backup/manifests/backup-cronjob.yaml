@@ -1,0 +1,25 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: bedrock-backup
+spec:
+  schedule: "0 7 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: bedrock-backup-serviceaccount
+          containers:
+          - name: bedrock-backup
+            image: hansenms/bedrock-backup
+            command: [ "/opt/minecraft/backup-bedrock.sh" ]
+            args: ["bds"]
+            workingDir: /data
+            volumeMounts: 
+            - mountPath: /data
+              name: datadir
+          restartPolicy: OnFailure
+          volumes:
+          - name: datadir
+            persistentVolumeClaim:
+              claimName: bedrock-backup

@@ -41,7 +41,7 @@ for f in $files; do
 		length="${BASH_REMATCH[2]}"
 		backupFileName=$(find $backupName/ -name $fileName)
 		if [ -f "$backupFileName" ]; then
-			truncate --size="$length" "$backupFileName"
+			truncate -s "$length" "$backupFileName"
 		fi
     fi
 done

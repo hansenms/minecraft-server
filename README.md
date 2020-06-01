@@ -1,10 +1,10 @@
 # Minecraft Server on Kubernetes
 
-Minecraft is a great game for kids (of all ages) to learn, explore, and be creative. At some point, it may be interesting to play with others online and you may want to do that in a controlled environment. So you are thinking, you need a private server.
+Minecraft is a great game for kids (of all ages) to learn, explore, and be creative. At some point, it may be interesting to play with others online and you may want to do that on a dedicated private server. It is a a controlled environment where you can learn and explore how the game actually works.
 
 However, before you go down the rabbit hole (the instructions here), if you just want the easiest way to get a private server experience with Minecraft, check out the [Minecraft Realms](https://www.minecraft.net/realms) where you can get a private server for a few friends for about $8/month. If you are less technically inclined and don't care about how all of this works, then that is what you are looking for.
 
-If, on the other hand, you wonder how Minecraft servers actually work and you want to **run a Minecraft server like a boss**, read on. This repo demonstrates how to run a Minecraft server in Kubernetes. There are also some details on how to connect consoles (e.g. Xbox One) to your private server. 
+If, on the other hand, you wonder how Minecraft servers actually work and you want to **run a Minecraft server in Kubernetes like a boss**, read on. This repo demonstrates how to run a Minecraft server in Azure Kubernetes Service (AKS). There are also some details on how to connect consoles (e.g. Xbox One) to your private server. 
 
 ## Bedrock vs Java Edition
 
@@ -203,6 +203,8 @@ You can restore this to an Azure Files share with:
 
 Make sure you don't have a running bedrock server on that share. You can create one, shut it down, restore, and then bring it back up.
 
+You can [read more about backup scripts](bedrock-backup/) and how to set up a cron job in the cluster to do regular backups.
+
 ## Acknowledgements
 
 Most of the information in this repo was compiled from other sources. In no particular order:
@@ -213,3 +215,4 @@ Most of the information in this repo was compiled from other sources. In no part
 1. [Kevint at theAutomators](https://theautomaters.com/) for a [blog on running Bedrock on Kubernetes](https://theautomaters.com/minecraft-on-kubernetes/).
 1. [The Java Edition Minecraft helm chart](https://github.com/helm/charts/tree/master/stable/minecraft).
 1. [Jaime Pillora](https://github.com/jpillora) for the [Docker image for dnsmasq](https://github.com/jpillora/docker-dnsmasq).
+1. [Vincent Vermilya aka TapeWem](https://github.com/TapeWerm) for his [MCscripts](https://github.com/TapeWerm/MCscripts) repo, which provided some inspiration for the [backup job](bedrock-backup/) in this repo. 

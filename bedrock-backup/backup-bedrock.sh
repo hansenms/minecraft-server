@@ -50,7 +50,9 @@ done
 tar -czvf "${backupName}.tar.gz" -C $backupName .
 
 if [ -f "$papyrusExe" ]; then
-	$papyrusExe --world $backupName/worlds/Bedrock\ level/db --output ./map
+	$papyrusExe --world $backupName/worlds/Bedrock\ level/db --output /tmp/map
+	rm -rf ./map
+	mv /tmp/map ./
 fi
 
 rm -rf $backupName

@@ -50,7 +50,8 @@ done
 tar -czvf "${backupName}.tar.gz" -C $backupName .
 
 if [ -f "$papyrusExe" ]; then
-	$papyrusExe --world $backupName/worlds/Bedrock\ level/db --output /tmp/map
+	cp -r map /tmp/
+	$papyrusExe --threads 4 --maxqueue 16 --playericons true --world $backupName/worlds/Bedrock\ level/db --output /tmp/map
 	rm -rf ./map
 	mv /tmp/map ./
 fi

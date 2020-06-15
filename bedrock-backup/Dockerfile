@@ -1,4 +1,4 @@
-FROM ubuntu
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -23,7 +23,7 @@ RUN apt-get update \
     && echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/azure-cli.list \
     && curl -sL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - 2>/dev/null \
     && apt-get update \
-    && apt-get install -y azure-cli=$AZURE_CLI_VERSION \
+    && apt-get install -y azure-cli \
     #
     # Install jq
     && apt-get install -y jq \
@@ -39,9 +39,14 @@ ENV DEBIAN_FRONTEND=dialog
 RUN mkdir -p /opt/minecraft
 COPY *.sh /opt/minecraft/
 
-RUN mkdir -p /opt/papyruscs \
-    && cd /opt/papyruscs \
-    && wget -q https://github.com/mjungnickel18/papyruscs/releases/download/v0.5.0/papyruscs-dotnetcore-0.5.0-linux64.zip \
-    && unzip *.zip \
-    && chmod +x PapyrusCs
+WORKDIR /app
+
+RUN git clone https://github.com/mjungnickel18/papyruscs \
+    && cd papyruscs \
+    && dotnet publish PapyrusCs -c Release --self-contained --runtime linux-x64 \
+    && chmod +x PapyrusCs/bin/Release/netcoreapp3.1/linux-x64/PapyrusCs \
+    && ln -s $PWD/PapyrusCs/bin/Release/netcoreapp3.1/linux-x64/PapyrusCs /usr/bin/PapyrusCs
+
+
+
 

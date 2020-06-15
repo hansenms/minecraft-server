@@ -11,9 +11,9 @@ spec:
           serviceAccountName: bedrock-backup-serviceaccount
           containers:
           - name: bedrock-backup
-            image: hansenms/bedrock-backup:v0.2.1
+            image: hansenms/bedrock-backup:v0.3.1
             command: [ "/opt/minecraft/backup-bedrock.sh" ]
-            args: [ "bds", "/opt/papyruscs/PapyrusCs" ]
+            args: [ "bds", "/usr/bin/PapyrusCs" ]
             workingDir: /data
             resources:
               requests:

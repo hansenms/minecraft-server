@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: bedrock-backup
 spec:
-  schedule: "36 * * * *"
+  schedule: "0 7 * * *"
   jobTemplate:
     spec:
       template:

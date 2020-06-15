@@ -51,7 +51,9 @@ You may want to edit the role for this account first. It has more privileges tha
 Then start the cron job:
 
 ```bash
-ubectl apply -f manifests/backup-cronjob.yaml
+kubectl apply -f manifests/backup-cronjob.yaml
 ```
 
 You will want to make some edits to this file too. Specifically, the name of the helm release to back up is an argument to the container and the job is currently set to run at 07:00 UTC (in the middle of the night when little kids are asleep on the West Coast). Adjust as needed, it is just an example of one possible way to do it.
+
+Note: This cronjob also generates a map from the backup using [PapyrusCS](https://github.com/mjungnickel18/papyruscs) and places it in the `/map` folder of the mapped volume. The map generation is fairly CPU and Memory intensive. You can switch it off by removing the argument to the backup script that points to the PapyrusCS executable.

@@ -139,3 +139,31 @@ fi
 az aks get-credentials --name $clusterName --resource-group $resourceGroupName
 
 helm repo add stable https://kubernetes-charts.storage.googleapis.com
+
+# Install nginx
+foundIngressControllerNamespace=`kubectl get namespace -o json | jq '.items[] | select(.metadata.name == "ingress-controller")'`
+if [ -z "$foundIngressControllerNamespace" ]; then
+    kubectl create namespace ingress-controller
+fi
+
+# The specification of linux nodes here is not really necessary since that is all we have
+# but if we add Windows nodes in the future, we will want to make sure nginx is on Linux
+helm upgrade --install nginx-ingress stable/nginx-ingress \
+    --namespace ingress-controller \
+    --set controller.replicaCount=2 \
+    --set controller.nodeSelector."kubernetes\.io/os"=linux \
+    --set defaultBackend.nodeSelector."kubernetes\.io/os"=linux
+
+# Set up cert-manager
+foundCertManagerNamespace=`kubectl get namespace -o json | jq '.items[] | select(.metadata.name == "cert-manager")'`
+
+if [ -z "$foundCertManagerNamespace" ]; then
+    kubectl create namespace cert-manager
+    kubectl label namespace cert-manager cert-manager.io/disable-validation=true
+    kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
+
+    # wait for deployments to complete
+    for i in $(kubectl get deployment --namespace cert-manager -o json | jq -r .items[].metadata.name); do
+        kubectl rollout status deployment $i --namespace cert-manager
+    done
+fi

@@ -180,7 +180,7 @@ kubectl get svc
 
 and set that public IP address as the primary DNS server address for your Xbox One console.
 
-## Backing Bedrock Dedicated Server
+## Backing Up Bedrock Dedicated Server
 
 Backing up a bedrock server is a bit tricky. The sequence is:
 

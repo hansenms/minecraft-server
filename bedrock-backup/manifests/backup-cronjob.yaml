@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: bedrock-backup
 spec:
-  schedule: "0 7 * * *"
+  schedule: "0 * * * *"
   jobTemplate:
     spec:
       template:
@@ -13,7 +13,7 @@ spec:
           - name: bedrock-backup
             image: hansenms/bedrock-backup
             command: [ "/opt/minecraft/backup-bedrock.sh" ]
-            args: ["bds"]
+            args: [ "bds", "/opt/papyruscs/PapyrusCs" ]
             workingDir: /data
             volumeMounts: 
             - mountPath: /data

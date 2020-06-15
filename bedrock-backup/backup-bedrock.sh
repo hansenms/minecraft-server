@@ -5,23 +5,24 @@ release=$1
 podName=$($folder/get-bedrock-pod-name.sh $release)
 timestamp=$(date '+%Y%m%d-%H%M%S')
 backupName="bedrock-backup-${timestamp}"
+papyrusExe=$2
 
 # Make sure we have artifacts in pod
 $folder/upload-scripts.sh $podName
 
-kubectl exec $podName -- /tmp/scripts/pod-send-command.sh "save hold"
+kubectl exec $podName -- /tmp/bedrock-backup/pod-send-command.sh "save hold"
 
 timeout=0
 unset logText
 until echo "$logText" | grep -q "Data saved."; do
     if [ "$timeout" = 60 ]; then
-        kubectl exec $podName -- /tmp/scripts/pod-send-command.sh "save resume"
+        kubectl exec $podName -- /tmp/bedrock-backup/pod-send-command.sh "save resume"
 		>&2 echo "save query timeout"
 		exit 1
 	fi
 
 	# Check if backup is ready
-    kubectl exec $podName -- /tmp/scripts/pod-send-command.sh "save query"
+    kubectl exec $podName -- /tmp/bedrock-backup/pod-send-command.sh "save query"
     logText=$(kubectl logs --tail 2 $podName)
 	timeout=$(( ++timeout ))
 done
@@ -31,7 +32,7 @@ kubectl cp $podName:/data/worlds ./$backupName/worlds 1>/dev/null
 kubectl cp $podName:/data/whitelist.json ./$backupName/whitelist.json  1>/dev/null
 kubectl cp $podName:/data/permissions.json ./$backupName/permissions.json  1>/dev/null
 kubectl cp $podName:/data/server.properties ./$backupName/server.properties  1>/dev/null
-kubectl exec $podName -- /tmp/scripts/pod-send-command.sh "save resume"
+kubectl exec $podName -- /tmp/bedrock-backup/pod-send-command.sh "save resume"
 
 files=$(echo $logText | grep -Eo "[^:/]+:[0-9]+")
 for f in $files; do
@@ -47,4 +48,9 @@ for f in $files; do
 done
 
 tar -czvf "${backupName}.tar.gz" -C $backupName .
+
+if [ -f "$papyrusExe" ]; then
+	$papyrusExe --world $backupName/worlds/Bedrock\ level/db --output ./map
+fi
+
 rm -rf $backupName

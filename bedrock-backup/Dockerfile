@@ -43,9 +43,9 @@ WORKDIR /app
 
 RUN git clone https://github.com/mjungnickel18/papyruscs \
     && cd papyruscs \
-    && dotnet publish PapyrusCs -c Release --self-contained --runtime linux-x64 \
-    && chmod +x PapyrusCs/bin/Release/netcoreapp3.1/linux-x64/PapyrusCs \
-    && ln -s $PWD/PapyrusCs/bin/Release/netcoreapp3.1/linux-x64/PapyrusCs /usr/bin/PapyrusCs
+    && dotnet publish PapyrusCs -c Debug --self-contained --runtime linux-x64 \
+    && chmod +x PapyrusCs/bin/Debug/netcoreapp3.1/linux-x64/PapyrusCs \
+    && ln -s $PWD/PapyrusCs/bin/Debug/netcoreapp3.1/linux-x64/PapyrusCs /usr/bin/PapyrusCs
 
 
 

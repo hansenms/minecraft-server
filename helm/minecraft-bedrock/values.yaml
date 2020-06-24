@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: itzg/minecraft-bedrock-server
+  repository: hansenms/minecraft-bedrock-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart version.
-  tag: latest
+  tag: v0.1.0
 
 persistence:
   storageClass: "azurefile"
@@ -19,8 +19,8 @@ persistence:
 
 minecraftServer:
   name: "Kubernetes Minecraft (Bedrock)"
-  # One of: LATEST, PREVIOUS, 1.11, 1.12, 1.13, 1.14.
-  version: "1.14"
+  # One of: LATEST, PREVIOUS, 1.11, 1.12, 1.13, 1.14, 1.16
+  version: "1.16"
   # Game mode
   gameMode: "survival"
   # Game difficulty

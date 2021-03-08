@@ -36,9 +36,6 @@ RUN apt-get update \
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=dialog
 
-RUN mkdir -p /opt/minecraft
-COPY *.sh /opt/minecraft/
-
 WORKDIR /app
 
 RUN git clone https://github.com/mjungnickel18/papyruscs \
@@ -47,6 +44,9 @@ RUN git clone https://github.com/mjungnickel18/papyruscs \
     && chmod +x PapyrusCs/bin/Debug/netcoreapp3.1/linux-x64/PapyrusCs \
     && ln -s $PWD/PapyrusCs/bin/Debug/netcoreapp3.1/linux-x64/PapyrusCs /usr/bin/PapyrusCs
 
+WORKDIR /
 
+RUN mkdir -p /opt/minecraft
+COPY *.sh /opt/minecraft/
 
 

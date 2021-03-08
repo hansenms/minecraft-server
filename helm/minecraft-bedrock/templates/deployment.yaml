@@ -3,34 +3,34 @@ kind: Deployment
 metadata:
   name: {{ include "minecraft-bedrock.fullname" . }}
   labels:
-    {{- include "minecraft-bedrock.labels" . | nindent 4 }}
+  {{- include "minecraft-bedrock.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "minecraft-bedrock.selectorLabels" . | nindent 6 }}
+  {{- include "minecraft-bedrock.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
+      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        {{- include "minecraft-bedrock.selectorLabels" . | nindent 8 }}
+    {{- include "minecraft-bedrock.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "minecraft-bedrock.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           tty: true
           stdin: true
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -48,7 +48,7 @@ spec:
             periodSeconds: 30
             failureThreshold: 10
             successThreshold: 1
-            timeoutSeconds: 1      
+            timeoutSeconds: 1
           readinessProbe:
             exec:
               command:
@@ -60,46 +60,70 @@ spec:
             periodSeconds: 5
             failureThreshold: 10
             successThreshold: 1
-            timeoutSeconds: 1      
+            timeoutSeconds: 1
           env:
             - name: EULA
               value: "TRUE"
             - name: SERVER_NAME
-              value: {{ .Values.minecraftServer.name | quote }}
-            - name: VERSION
-              value: {{ .Values.minecraftServer.version | quote }}
-            - name: GAMEMODE
-              value: {{ .Values.minecraftServer.gameMode | quote }}
-            - name: DIFFICULTY
-              value: {{ .Values.minecraftServer.difficulty | quote }}
+              value: {{ .Values.minecraftServer.serverName | quote }}
             - name: WHITE_LIST
-              value: {{ .Values.minecraftServer.whitelist | quote }}
+              value: {{ default "" .Values.minecraftServer.whitelist | quote }}
+            - name: WHITE_LIST_USERS
+              value: {{ default "" .Values.minecraftServer.whitelistUsers | quote }}
+            - name: OPS
+              value: {{ default "" .Values.minecraftServer.ops | quote }}
+            - name: MEMBERS
+              value: {{ default "" .Values.minecraftServer.members | quote }}
+            - name: VISITORS
+              value: {{ default "" .Values.minecraftServer.visitors | quote }}
+            - name: ALLOW_CHEATS
+              value: {{ .Values.minecraftServer.cheats | quote }}
             - name: MAX_PLAYERS
               value: {{ .Values.minecraftServer.maxPlayers | quote }}
+            - name: VIEW_DISTANCE
+              value: {{ .Values.minecraftServer.viewDistance | quote }}
+            - name: TICK_DISTANCE
+              value: {{ .Values.minecraftServer.tickDistance | quote }}
+            - name: PLAYER_IDLE_TIMEOUT
+              value: {{ .Values.minecraftServer.playerIdleTimeout | quote }}
+            - name: MAX_THREADS
+              value: {{ .Values.minecraftServer.maxThreads | quote }}
+            - name: GAMEMODE
+              value: {{ .Values.minecraftServer.gameMode | quote }}
+            - name: LEVEL_TYPE
+              value: {{ .Values.minecraftServer.levelType | quote }}
+            - name: LEVEL_NAME
+              value: {{ .Values.minecraftServer.levelName | quote }}
+            - name: LEVEL_SEED
+              value: {{ default "" .Values.minecraftServer.levelSeed | quote }}
+            - name: DEFAULT_PLAYER_PERMISSION_LEVEL
+              value: {{ .Values.minecraftServer.defaultPermission | quote }}
+            - name: TEXTUREPACK_REQUIRED
+              value: {{ .Values.minecraftServer.texturepackRequired | quote }}
             - name: ONLINE_MODE
               value: {{ .Values.minecraftServer.onlineMode | quote }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-          - name: datadir
-            mountPath: /data
+            - name: datadir
+              mountPath: /data
       volumes:
-      - name: datadir
-      {{- if .Values.persistence.dataDir.enabled }}
-        persistentVolumeClaim:
-          claimName: {{ template "minecraft-bedrock.fullname" . }}-datadir
-      {{- else }}
-        emptyDir: {}
+        - name: datadir
+          {{- if .Values.persistence.dataDir.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ template "minecraft-bedrock.fullname" . }}-datadir
+          {{- else }}
+          emptyDir: { }
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
-        {{- toYaml . | nindent 8 }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
-        {{- toYaml . | nindent 8 }}
+      {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+      {{- toYaml . | nindent 8 }}
+  {{- end }}

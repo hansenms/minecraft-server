@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "bedrock-backup.fullname" . }}-mapserver
+  labels:
+    {{- include "bedrock-backup.labels" . | nindent 4 }}
+    app: {{ template "bedrock-backup.fullname" . }}-mapserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "bedrock-backup.fullname" . }}-mapserver
+  template:
+    metadata:
+      labels:
+        app: {{ template "bedrock-backup.fullname" . }}-mapserver
+    spec:
+      containers:
+        - name: {{ template "bedrock-backup.fullname" . }}-mapserver
+          image: nginx
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: datadir
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: {{ template "bedrock-backup.fullname" . }}-datadir
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "bedrock-backup.fullname" . }}-mapserver
+spec:
+  selector:
+    app: {{ template "bedrock-backup.fullname" . }}-mapserver
+  type: {{ .Values.mapServer.serviceType }}
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "bedrock-backup.fullname" . }}-mapserver
+  labels:
+    app: {{ template "bedrock-backup.fullname" . }}-mapserver
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    {{- if .Values.mapServer.tls -}}
+    cert-manager.io/cluster-issuer: letsencrypt
+    {{- end }}
+spec:
+  {{- if .Values.mapServer.tls -}}
+  tls:
+    - hosts:
+        - {{ .Values.mapServer.hostName }}
+      secretName: {{ template "bedrock-backup.fullname" . }}-mapserver-tls
+  {{- end }}
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "bedrock-backup.fullname" . }}-mapserver
+                port:
+                  number: 80
+      host: {{ .Values.mapServer.hostName }}

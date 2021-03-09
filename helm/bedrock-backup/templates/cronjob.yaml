@@ -6,6 +6,8 @@ metadata:
   {{- include "bedrock-backup.labels" . | nindent 4 }}
 spec:
   schedule: "0 7 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
       template:

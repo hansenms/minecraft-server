@@ -26,7 +26,7 @@ spec:
           serviceAccountName: {{ include "bedrock-backup.serviceAccountName" . }}
           securityContext:
           {{- toYaml .Values.podSecurityContext | nindent 12 }}
-          containers:
+          initContainers:
             - name:  {{ .Chart.Name }}
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -35,6 +35,31 @@ spec:
               workingDir: /data
               resources:
               {{- toYaml .Values.resources | nindent 16 }}
+              volumeMounts:
+                - name: datadir
+                  mountPath: /data
+          containers:
+            - name: {{ .Chart.Name }}-s3sync
+              image: "amazon/aws-cli:latest"
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3sync.secretName }}
+                      key: AWS_ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3sync.secretName }}
+                      key: AWS_SECRET_ACCESS_KEY
+                - name: AWS_DEFAULT_REGION
+                  value: us-east-1
+                - name: AWS_DEFAULT_OUTPUT
+                  value: json
+              command: [ "aws" ]
+              args: [ "s3", "cp", "./", "s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}", "--recursive", "--exclude", "map/*" ]
+              workingDir: /data
               volumeMounts:
                 - name: datadir
                   mountPath: /data
@@ -53,5 +78,5 @@ spec:
           {{- end }}
           {{- with .Values.tolerations }}
           tolerations:
-          {{- toYaml . | nindent 12 }}
-          {{- end }}
+  {{- toYaml . | nindent 12 }}
+  {{- end }}

@@ -62,8 +62,7 @@ tar -czvf "${backupName}.tar.gz" -C "$backupName" .
 
 if [ -f "$papyrusExe" ]; then
   cp -r ./map /tmp/
-  # TODO: pass world name through env vars
-  world="$backupName/worlds/Bedrock\ level/db"
+  world="$backupName/worlds/Bedrock level/db"
   $papyrusExe --threads 8 --maxqueue 16 --dim 0 --playericons true --world "$world" --output /tmp/map
   $papyrusExe --threads 8 --maxqueue 16 --dim 0 --profile underground --playericons true --world "$world" --output /tmp/map
   $papyrusExe --threads 8 --maxqueue 16 --dim 1 --playericons true --world "$world" --output /tmp/map

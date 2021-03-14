@@ -25,6 +25,38 @@ spec:
       serviceAccountName: {{ include "minecraft-bedrock.serviceAccountName" . }}
       securityContext:
       {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: {{ .Chart.Name }}-s3restore
+          image: "amazon/aws-cli:latest"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.s3sync.secretName }}
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.s3sync.secretName }}
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_DEFAULT_REGION
+              value: us-east-1
+            - name: AWS_DEFAULT_OUTPUT
+              value: json
+          command: ['sh', '-c', '[ -z `aws s3 ls s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/` ] || aws s3 cp s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/`aws s3 ls s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/ | cut -d " " -f 7 | sort -r | head -n 1` ./']
+          workingDir: /data
+          volumeMounts:
+            - name: datadir
+              mountPath: /data
+        - name: {{ .Chart.Name }}-untar
+          image: "busybox:1.28"
+          imagePullPolicy: IfNotPresent
+          command: ['sh', '-c', '( tar -xzf *.tar.gz && rm -rf *.tar.gz) || exit 0 ']
+          workingDir: /data
+          volumeMounts:
+            - name: datadir
+              mountPath: /data
       containers:
         - name: {{ .Chart.Name }}
           tty: true

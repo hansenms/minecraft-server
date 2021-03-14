@@ -44,7 +44,7 @@ spec:
               value: us-east-1
             - name: AWS_DEFAULT_OUTPUT
               value: json
-          command: ['sh', '-c', '[ -z `aws s3 ls s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/` ] || aws s3 cp s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/`aws s3 ls s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/ | cut -d " " -f 7 | sort -r | head -n 1` ./']
+          command: ['sh', '-cx', '( aws s3 cp s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/`aws s3 ls s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/ | awk ''{print $4}'' | sort -r | head -n 1` ./ ) || exit 0']
           workingDir: /data
           volumeMounts:
             - name: datadir
@@ -52,7 +52,7 @@ spec:
         - name: {{ .Chart.Name }}-untar
           image: "busybox:1.28"
           imagePullPolicy: IfNotPresent
-          command: ['sh', '-c', '( tar -xzf *.tar.gz && rm -rf *.tar.gz) || exit 0 ']
+          command: ['sh', '-cx', '( tar -xzf *.tar.gz && rm -rf *.tar.gz) || exit 0 ']
           workingDir: /data
           volumeMounts:
             - name: datadir
@@ -122,6 +122,8 @@ spec:
               value: {{ .Values.minecraftServer.maxThreads | quote }}
             - name: GAMEMODE
               value: {{ .Values.minecraftServer.gameMode | quote }}
+            - name: DIFFICULTY
+              value: {{ .Values.minecraftServer.difficulty | quote }}
             - name: LEVEL_TYPE
               value: {{ .Values.minecraftServer.levelType | quote }}
             - name: LEVEL_NAME

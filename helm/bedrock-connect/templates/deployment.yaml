@@ -30,13 +30,38 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command:
+            - "java"
+            - "-Xms1G"
+            - "-Xmx1G"
+            - "-jar"
+            - "BedrockConnect-1.0-SNAPSHOT.jar"
+            - "nodb=true"
+            {{- if .Values.bedrockConnect.whitelistUsers }}
+            - "whitelist=/whitelist.txt"
+            {{- end }}
+            - "featured_servers={{ .Values.bedrockConnect.featuredServers }}"
+            {{- if .Values.bedrockConnect.customServers }}
+            - "custom_servers=/custom_servers.json"
+            {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: bedrock
               containerPort: 19132
               protocol: UDP
+          volumeMounts:
+            - name: config-volume
+              mountPath: /custom_servers.json
+              subPath: custom_servers.json
+            - name: config-volume
+              mountPath: /whitelist.txt
+              subPath: whitelist.txt
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "bedrock-connect.fullname" . }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

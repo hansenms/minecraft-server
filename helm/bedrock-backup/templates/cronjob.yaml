@@ -1,0 +1,84 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "bedrock-backup.fullname" . }}
+  labels:
+  {{- include "bedrock-backup.labels" . | nindent 4 }}
+spec:
+  schedule: "0 7 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          {{- with .Values.podAnnotations }}
+          annotations:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          labels:
+        {{- include "bedrock-backup.selectorLabels" . | nindent 12 }}
+        spec:
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "bedrock-backup.serviceAccountName" . }}
+          securityContext:
+          {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          {{- if .Values.s3sync }}
+          initContainers:
+          {{- else}}
+          containers:
+          {{- end}}
+            - name:  {{ .Chart.Name }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: [ "/opt/minecraft/backup-bedrock.sh" ]
+              args: [ "{{ .Values.minecraftServer.releaseName }}", "/usr/bin/PapyrusCs", {{ .Release.Namespace }} ]
+              workingDir: /data
+              resources:
+              {{- toYaml .Values.resources | nindent 16 }}
+              volumeMounts:
+                - name: datadir
+                  mountPath: /data
+          {{- if .Values.s3sync }}
+          containers:
+            - name: {{ .Chart.Name }}-s3sync
+              image: "amazon/aws-cli:latest"
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3sync.secretName }}
+                      key: AWS_ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3sync.secretName }}
+                      key: AWS_SECRET_ACCESS_KEY
+              command: [ "aws" ]
+              args: [ "s3", "cp", "./", "s3://{{ .Values.s3sync.bucketName }}/{{ .Values.minecraftServer.releaseName }}-backup", "--recursive", "--exclude", "map/*" ]
+              workingDir: /data
+              volumeMounts:
+                - name: datadir
+                  mountPath: /data
+          {{- end }}
+          restartPolicy: OnFailure
+          volumes:
+            - name: datadir
+              persistentVolumeClaim:
+                claimName: {{ template "bedrock-backup.fullname" . }}-datadir
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+          {{- toYaml . | nindent 14 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+          {{- toYaml . | nindent 12 }}
+          {{- end }}

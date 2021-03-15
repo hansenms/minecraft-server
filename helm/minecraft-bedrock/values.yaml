@@ -26,10 +26,12 @@ s3sync: {}
 #  bucketName: bucket
 
 minecraftServer:
+  # This is the server name shown in the in-game server list.
+  serverName: "Kubernetes Minecraft (Bedrock)"
   # This must be overridden, since we can't accept this for the user.
   eula: "FALSE"
   # One of: LATEST, SNAPSHOT, or a specific version (ie: "1.7.9").
-  version: "1.16"
+  version: "LATEST"
   # One of: peaceful, easy, normal, and hard
   difficulty: "normal"
   # A boolean to indicate if whitelist is enabled or not. If this is enabled
@@ -40,16 +42,16 @@ minecraftServer:
   # A comma-separated list of player names to whitelist with no whitespace.
   # ex: whitelistUsers: player1,player2,player3
   whitelistUsers:
-  # A comma-seperated list of xuid's for operators on server with no
+  # A comma-separated list of xuid's for operators on server with no
   # whitespaces.
   # The server logs will print xuids as players connect.
   # ex: ops: "12345678,0987654"
   ops:
-  # A comma-seperated list of xuid's for members on server with no
+  # A comma-separated list of xuid's for members on server with no
   # whitespaces.
   # ex: ops: "12345678,0987654"
   members:
-  # A comma-seperated list of xuid's for visitors on server with no
+  # A comma-separated list of xuid's for visitors on server with no
   # whitespaces.
   # ex: ops: "12345678,0987654"
   visitors:
@@ -60,7 +62,7 @@ minecraftServer:
   # Max view distance (in chunks).
   viewDistance: 14
   # The "level-name" value is used as the world name and its folder name.
-  # The backup sidecar expects "Bedrock level" (in map generator)
+  # The backup sidecar expects "Bedrock level" (in the map generator script)
   levelName: "Bedrock level"
   # Define this if you want a specific map generation seed.
   levelSeed:
@@ -74,8 +76,6 @@ minecraftServer:
   levelType: "DEFAULT"
   # Force clients to use texture packs in the current world
   texturepackRequired: false
-  # This is the server name shown in the in-game server list.
-  serverName: "Monster"
   # Check accounts against Minecraft account service.
   onlineMode: true
   # Maximum number of threads the server tries to use. If set to 0 or removed then it uses as many as possible.
@@ -87,32 +87,30 @@ serviceAccount:
   # Specifies whether a service account should be created
   create: true
   # Annotations to add to the service account
-  annotations: { }
+  annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: { }
+podAnnotations: {}
 
-podSecurityContext: {
+podSecurityContext: {}
   # fsGroup: 2000
-}
 
-securityContext: {
+securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-}
 
 service:
   type: LoadBalancer
   port: 19132
   # dnsPrefix: "mydnsprefix"
 
-resources: {
+resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -123,10 +121,9 @@ resources: {
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-}
 
-nodeSelector: { }
+nodeSelector: {}
 
-tolerations: [ ]
+tolerations: []
 
-affinity: { }
+affinity: {}

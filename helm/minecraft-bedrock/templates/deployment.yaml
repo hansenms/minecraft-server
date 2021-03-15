@@ -41,10 +41,6 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.s3sync.secretName }}
                   key: AWS_SECRET_ACCESS_KEY
-            - name: AWS_DEFAULT_REGION
-              value: us-east-1
-            - name: AWS_DEFAULT_OUTPUT
-              value: json
           command: ['sh', '-cx', '( aws s3 cp s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/`aws s3 ls s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/ | awk ''{print $4}'' | sort -r | head -n 1` ./ ) || exit 0']
           workingDir: /data
           volumeMounts:
@@ -64,7 +60,7 @@ spec:
           tty: true
           stdin: true
           securityContext:
-          {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -141,7 +137,7 @@ spec:
             - name: ONLINE_MODE
               value: {{ .Values.minecraftServer.onlineMode | quote }}
           resources:
-          {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: datadir
               mountPath: /data
@@ -155,13 +151,13 @@ spec:
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.affinity }}
       affinity:
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.tolerations }}
       tolerations:
-      {{- toYaml . | nindent 8 }}
-  {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

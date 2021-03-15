@@ -58,12 +58,8 @@ spec:
                     secretKeyRef:
                       name: {{ .Values.s3sync.secretName }}
                       key: AWS_SECRET_ACCESS_KEY
-                - name: AWS_DEFAULT_REGION
-                  value: us-east-1
-                - name: AWS_DEFAULT_OUTPUT
-                  value: json
               command: [ "aws" ]
-              args: [ "s3", "cp", "./", "s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}", "--recursive", "--exclude", "map/*" ]
+              args: [ "s3", "cp", "./", "s3://{{ .Values.s3sync.bucketName }}/{{ .Values.minecraftServer.releaseName }}-backup", "--recursive", "--exclude", "map/*" ]
               workingDir: /data
               volumeMounts:
                 - name: datadir

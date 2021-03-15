@@ -3,28 +3,29 @@ kind: Deployment
 metadata:
   name: {{ include "minecraft-bedrock.fullname" . }}
   labels:
-  {{- include "minecraft-bedrock.labels" . | nindent 4 }}
+    {{- include "minecraft-bedrock.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-  {{- include "minecraft-bedrock.selectorLabels" . | nindent 6 }}
+      {{- include "minecraft-bedrock.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-    {{- include "minecraft-bedrock.selectorLabels" . | nindent 8 }}
+        {{- include "minecraft-bedrock.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-      {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "minecraft-bedrock.serviceAccountName" . }}
       securityContext:
-      {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if .Values.s3sync }}
       initContainers:
         - name: {{ .Chart.Name }}-s3restore
           image: "amazon/aws-cli:latest"
@@ -57,6 +58,7 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: /data
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           tty: true
@@ -95,9 +97,11 @@ spec:
             timeoutSeconds: 1
           env:
             - name: EULA
-              value: "TRUE"
+              value: {{ .Values.minecraftServer.eula | quote }}
             - name: SERVER_NAME
               value: {{ .Values.minecraftServer.serverName | quote }}
+            - name: VERSION
+              value: {{ .Values.minecraftServer.version | quote }}
             - name: WHITE_LIST
               value: {{ default "" .Values.minecraftServer.whitelist | quote }}
             - name: WHITE_LIST_USERS

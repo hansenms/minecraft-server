@@ -27,9 +27,9 @@ mapServer:
   tls: false
   hostName: minecraft-map.cloudynerd.com
 
-s3sync:
-  secretName: s3sync
-  bucketName: bucket
+s3sync: {}
+#  secretName: s3sync
+#  bucketName: bucket
 
 serviceAccount:
   # Specifies whether a service account should be created

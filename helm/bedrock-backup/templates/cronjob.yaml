@@ -26,7 +26,11 @@ spec:
           serviceAccountName: {{ include "bedrock-backup.serviceAccountName" . }}
           securityContext:
           {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          {{- if .Values.s3sync }}
           initContainers:
+          {{- else}}
+          containers:
+          {{- end}}
             - name:  {{ .Chart.Name }}
               image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
               imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -38,6 +42,7 @@ spec:
               volumeMounts:
                 - name: datadir
                   mountPath: /data
+          {{- if .Values.s3sync }}
           containers:
             - name: {{ .Chart.Name }}-s3sync
               image: "amazon/aws-cli:latest"
@@ -63,6 +68,7 @@ spec:
               volumeMounts:
                 - name: datadir
                   mountPath: /data
+          {{- end }}
           restartPolicy: OnFailure
           volumes:
             - name: datadir
@@ -78,5 +84,5 @@ spec:
           {{- end }}
           {{- with .Values.tolerations }}
           tolerations:
-  {{- toYaml . | nindent 12 }}
-  {{- end }}
+          {{- toYaml . | nindent 12 }}
+          {{- end }}

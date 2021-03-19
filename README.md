@@ -42,6 +42,7 @@ To install the Bedrock minecraft server, use the helm chart in this repo:
 
 ```bash
 helm install bedrock-server helm/minecraft-bedrock/ \
+    --set minecraftServer.eula=true \
     --set minecraftServer.gameMode="survival" \
     --set minecraftServer.difficulty="normal" \
     --set minecraftServer.whitelist=true \

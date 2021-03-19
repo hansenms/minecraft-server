@@ -18,18 +18,62 @@ persistence:
   resourcePolicy: "keep"
 
 minecraftServer:
-  name: "Kubernetes Minecraft (Bedrock)"
-  # One of: LATEST, PREVIOUS, 1.11, 1.12, 1.13, 1.14, 1.16
-  version: "1.16"
-  # Game mode
-  gameMode: "survival"
-  # Game difficulty
-  difficulty: normal
-  # A comma-separated list of player names to whitelist.
+  # This is the server name shown in the in-game server list.
+  serverName: "Kubernetes Minecraft (Bedrock)"
+  # This must be overridden, since we can't accept this for the user.
+  eula: "FALSE"
+  # One of: LATEST, SNAPSHOT, or a specific version (ie: "1.7.9").
+  version: "LATEST"
+  # One of: peaceful, easy, normal, and hard
+  difficulty: "normal"
+  # A boolean to indicate if whitelist is enabled or not. If this is enabled
+  # and whitelistUsers is left blank, you will need to provide the whitelist.json
+  # file via the volume mounted in to the container. Setting whitelistUsers implies
+  # whitelist is true, so it is not necessary to set it.
   whitelist: true
+  # A comma-separated list of player names to whitelist with no whitespace.
+  # ex: whitelistUsers: player1,player2,player3
+  whitelistUsers:
+  # A comma-separated list of xuid's for operators on server with no
+  # whitespaces.
+  # The server logs will print xuids as players connect.
+  # ex: ops: "12345678,0987654"
+  ops:
+  # A comma-separated list of xuid's for members on server with no
+  # whitespaces.
+  # ex: ops: "12345678,0987654"
+  members:
+  # A comma-separated list of xuid's for visitors on server with no
+  # whitespaces.
+  # ex: ops: "12345678,0987654"
+  visitors:
   # Max connected players.
   maxPlayers: 20
+  # The world is ticked this many chunks away from any player.
+  tickDistance: 6
+  # Max view distance (in chunks).
+  viewDistance: 14
+  # The "level-name" value is used as the world name and its folder name.
+  # The backup sidecar expects "Bedrock level" (in the map generator script)
+  levelName: "Bedrock level"
+  # Define this if you want a specific map generation seed.
+  levelSeed:
+  # One of: creative, survival, adventure, spectator
+  gameMode: "survival"
+  # Permission level for new players joining for the first time (visitor, member, operator)
+  defaultPermission: "member"
+  # After a player has idled for this many minutes they get kicked.
+  playerIdleTimeout: 30
+  # One of: DEFAULT, FLAT, LEGACY
+  levelType: "DEFAULT"
+  # Force clients to use texture packs in the current world
+  texturepackRequired: false
+  # Check accounts against Minecraft account service.
   onlineMode: true
+  # Maximum number of threads the server tries to use. If set to 0 or removed then it uses as many as possible.
+  maxThreads: 0
+  # Cheat like commands can be used.
+  cheats: false
 
 imagePullSecrets: []
 nameOverride: ""

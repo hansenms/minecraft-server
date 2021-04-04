@@ -17,6 +17,7 @@ spec:
           {{- toYaml . | nindent 12 }}
           {{- end }}
           labels:
+            app: {{ template "bedrock-backup.fullname" . }}-mapserver
         {{- include "bedrock-backup.selectorLabels" . | nindent 12 }}
         spec:
           {{- with .Values.imagePullSecrets }}
@@ -59,7 +60,7 @@ spec:
                       name: {{ .Values.s3sync.secretName }}
                       key: AWS_SECRET_ACCESS_KEY
               command: [ "aws" ]
-              args: [ "s3", "cp", "./", "s3://{{ .Values.s3sync.bucketName }}/{{ .Values.minecraftServer.releaseName }}-backup", "--recursive", "--exclude", "map/*" ]
+              args: [ "s3", "sync", "./", "s3://{{ .Values.s3sync.bucketName }}/{{ .Values.minecraftServer.releaseName }}-backup", "--exclude", "map/*" ]
               workingDir: /data
               volumeMounts:
                 - name: datadir
@@ -70,15 +71,13 @@ spec:
             - name: datadir
               persistentVolumeClaim:
                 claimName: {{ template "bedrock-backup.fullname" . }}-datadir
-          {{- with .Values.nodeSelector }}
-          nodeSelector:
-          {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.affinity }}
           affinity:
-          {{- toYaml . | nindent 14 }}
-          {{- end }}
-          {{- with .Values.tolerations }}
-          tolerations:
-          {{- toYaml . | nindent 12 }}
-          {{- end }}
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchExpressions:
+                      - key: app
+                        operator: In
+                        values:
+                          - {{ template "bedrock-backup.fullname" . }}-mapserver
+                  topologyKey: "kubernetes.io/hostname"

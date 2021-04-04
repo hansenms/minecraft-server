@@ -68,5 +68,3 @@ resources:
 nodeSelector: {}
 
 tolerations: []
-
-affinity: {}

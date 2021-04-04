@@ -51,25 +51,25 @@ metadata:
   labels:
     app: {{ template "bedrock-backup.fullname" . }}-mapserver
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    {{- if .Values.mapServer.tls -}}
-    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    {{- if .Values.mapServer.tls }}
+    cert-manager.io/cluster-issuer: letsencrypt-production
     {{- end }}
 spec:
-  {{- if .Values.mapServer.tls -}}
-  tls:
-    - hosts:
-        - {{ .Values.mapServer.hostName }}
-      secretName: {{ template "bedrock-backup.fullname" . }}-mapserver-tls
-  {{- end }}
   rules:
-    - http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ template "bedrock-backup.fullname" . }}-mapserver
-                port:
-                  number: 80
-      host: {{ .Values.mapServer.hostName }}
+  - host: {{ .Values.mapServer.hostName }}
+    http:
+      paths:
+      - path: /{{ .Values.minecraftServer.releaseName }}(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ template "bedrock-backup.fullname" . }}-mapserver
+            port:
+              number: 80
+  {{- if .Values.mapServer.tls }}
+  tls:
+  - hosts:
+    - {{ .Values.mapServer.hostName }}
+    secretName: {{ template "bedrock-backup.fullname" . }}-mapserver-tls
+  {{- end }}

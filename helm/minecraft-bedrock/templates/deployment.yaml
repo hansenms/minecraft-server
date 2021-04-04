@@ -41,7 +41,7 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.s3sync.secretName }}
                   key: AWS_SECRET_ACCESS_KEY
-          command: ['sh', '-cx', '( aws s3 cp s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/`aws s3 ls s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/ | awk ''{print $4}'' | sort -r | head -n 1` ./ ) || exit 0']
+          command: ['sh', '-cx', '([ -z "$(ls -A ./)" ] && (aws s3 cp s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/`aws s3 ls s3://{{ .Values.s3sync.bucketName }}/{{ .Release.Name }}-backup/ | awk ''{print $4}'' | sort -r | head -n 1` ./)) || exit 0']
           workingDir: /data
           volumeMounts:
             - name: datadir

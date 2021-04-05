@@ -52,6 +52,7 @@ metadata:
     app: {{ template "bedrock-backup.fullname" . }}-mapserver
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
+    kubernetes.io/ingress.class: nginx-public
     {{- if .Values.mapServer.tls }}
     cert-manager.io/cluster-issuer: letsencrypt-production
     {{- end }}

@@ -39,7 +39,8 @@ ENV DEBIAN_FRONTEND=dialog
 WORKDIR /app
 
 RUN git clone https://github.com/mjungnickel18/papyruscs \
-    && cd papyruscs \
+    && cd /tmp && mkdir pack && wget https://aka.ms/resourcepacktemplate && unzip resourcepacktemplate -d pack \
+    && cd /app/papyruscs && rm -rf textures/* && mv /tmp/pack/textures/terrain_texture.json ./textures/ && mv /tmp/pack/textures/blocks ./textures/ \
     && dotnet publish PapyrusCs -c Debug --self-contained --runtime linux-x64 \
     && chmod +x PapyrusCs/bin/Debug/netcoreapp3.1/linux-x64/PapyrusCs \
     && ln -s $PWD/PapyrusCs/bin/Debug/netcoreapp3.1/linux-x64/PapyrusCs /usr/bin/PapyrusCs

@@ -8,7 +8,7 @@ If, on the other hand, you wonder how Minecraft servers actually work and you wa
 
 ## Bedrock vs Java Edition
 
-There are really two main flavors or editions of Minecraft. The original [Java Edition](https://minecraft.gamepedia.com/Java_Edition) and the [Bedrock Edition](https://minecraft.gamepedia.com/Bedrock_Edition). Both are alive and well and being used and developed. Please consult the [Minecraft Wiki](https://minecraft.gamepedia.com/Minecraft_Wiki) for more information on the editions and versions of Minecraft. The Java and Bedrock editions are **not** compatible or interoperable. Specifically, a player running the Java version cannot connect to a Bedrock server and vice versa.
+There are really two main flavors or editions of Minecraft. The original [Java Edition](https://minecraft.fandom.com/wiki/Java_Edition) and the [Bedrock Edition](https://minecraft.fandom.com/wiki/Bedrock_Edition). Both are alive and well and being used and developed. Please consult the [Minecraft Wiki](https://minecraft.fandom.com/wiki/Minecraft_Wiki) for more information on the editions and versions of Minecraft. The Java and Bedrock editions are **not** compatible or interoperable. Specifically, a player running the Java version cannot connect to a Bedrock server and vice versa.
 
 If your players are connecting from consoles (more details on that later), Windows 10, etc., they are likely using Bedrock edition and you should deploy the Bedrock server. If they are using the Minecraft launcher on Windows, Linux, or Mac, they are likely using the Java Edition. The instructions here are mostly focused on the Bedrock server, but there is some help on the Java Edition as well.
 

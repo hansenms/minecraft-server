@@ -54,7 +54,7 @@ fi
 az group create --name $resourceGroupName --location $environmentLocation
 
 # Create a keyvault
-az keyvault create -n $keyvaultName -g $resourceGroupName --enable-soft-delete true
+az keyvault create -n $keyvaultName -g $resourceGroupName
 
 sshKeyFile=~/.ssh/${environmentName}_rsa
 setKeyVaultSshSecrets=false
@@ -126,7 +126,7 @@ then
         --service-principal $spId \
         --client-secret $spPass \
         --ssh-key-value ${sshKeyFile}.pub \
-        --kubernetes-version 1.16.7
+        --kubernetes-version 1.27.3
 else
     az aks update \
         --resource-group $resourceGroupName \
@@ -138,7 +138,7 @@ fi
 
 az aks get-credentials --name $clusterName --resource-group $resourceGroupName
 
-helm repo add stable https://kubernetes-charts.storage.googleapis.com
+helm repo add stable https://charts.helm.sh/stable
 
 # Install nginx
 foundIngressControllerNamespace=`kubectl get namespace -o json | jq '.items[] | select(.metadata.name == "ingress-controller")'`
@@ -160,7 +160,7 @@ foundCertManagerNamespace=`kubectl get namespace -o json | jq '.items[] | select
 if [ -z "$foundCertManagerNamespace" ]; then
     kubectl create namespace cert-manager
     kubectl label namespace cert-manager cert-manager.io/disable-validation=true
-    kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
+    kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.13.1/cert-manager.yaml
 
     # wait for deployments to complete
     for i in $(kubectl get deployment --namespace cert-manager -o json | jq -r .items[].metadata.name); do
